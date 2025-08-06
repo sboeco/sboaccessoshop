@@ -18,15 +18,16 @@ const ProductDetails = () => {
       try {
         setLoading(true);
         const response = await axiosInstance.get(`/api/products/${productId}`);
-        console.log('API Response:', response.data); // Debug log
+// Fix: use actual productId
+        console.log('API Response:', response.data); 
         
-        // Check if we have a product in the response
         if (!response.data || !response.data.product) {
           console.error('No product data in response');
           return;
         }
 
         const productData = response.data.product;
+        console.log('Product Data:', productData); // Debug log
         
         setProduct({
           id: productData._id,
@@ -35,7 +36,7 @@ const ProductDetails = () => {
           description: productData.description,
           images: Array.isArray(productData.images) ? productData.images : [productData.images],
           colors: Array.isArray(productData.colors) ? productData.colors : [],
-          title: productData.name, // Add this for cart compatibility
+          title: productData.name,
         });
 
         if (productData.colors && productData.colors.length > 0) {

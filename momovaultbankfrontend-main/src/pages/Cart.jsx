@@ -1,6 +1,6 @@
 import { useCartContext } from '../Context/appstate/CartContext/CartContext'
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
+
 import { Minus, Plus, Trash2 } from 'lucide-react' // Tailwind-friendly icons (or use Heroicons)
 
 const Cart = () => {

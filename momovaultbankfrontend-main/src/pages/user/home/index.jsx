@@ -50,13 +50,17 @@ const HomePage = () => {
     e.stopPropagation(); // Prevent navigation when clicking add to cart
     onAdd(
       {
+        ...product,
         id: product._id,
         name: product.name,
         price: product.price,
-        images: product.images,
+        images: product.images || [],
       },
       1
     );
+    setTimeout(() => {
+      navigate('/cart');
+    }, 1500);
   };
 
   return (
@@ -133,10 +137,7 @@ const HomePage = () => {
                 {/* Independent Add to Cart button */}
                 <button
                   className="bg-blue-600 text-white px-4 py-2 rounded w-full hover:bg-blue-700 transition-colors"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAddToCart(e, product);
-                  }}
+                  onClick={(e) => handleAddToCart(e, product)}
                 >
                   Add to Cart
                 </button>
