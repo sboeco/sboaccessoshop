@@ -258,15 +258,16 @@ const HomePage = () => {
                     </p>
                     <div className="flex items-center justify-between">
                       <p className="font-bold text-lg text-orange-500">
-                        R {product.price}
+                        E {product.price}
                       </p>
-                      <button
-                        className="bg-orange-500 text-white p-2 rounded-full hover:bg-orange-600 transition-colors"
-                        onClick={(e) => handleAddToCart(e, product)}
-                        aria-label="Add to cart"
-                      >
-                        <FaShoppingCart size={16} />
-                      </button>
+                    <button
+  className="bg-orange-500 text-white px-4 py-2 rounded-full flex items-center gap-2 hover:bg-orange-600 transition-colors"
+  onClick={(e) => handleAddToCart(e, product)}
+  aria-label="Add to cart"
+>
+  <span className="text-sm font-semibold">Add to Cart</span>
+  <FaShoppingCart size={16} />
+</button>
                     </div>
                   </div>
                 </div>

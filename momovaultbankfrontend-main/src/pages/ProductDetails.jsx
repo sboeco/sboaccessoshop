@@ -18,17 +18,14 @@ const ProductDetails = () => {
       try {
         setLoading(true);
         const response = await axiosInstance.get(`/api/products/${productId}`);
-// Fix: use actual productId
-        console.log('API Response:', response.data); 
-        
+        console.log('API Response:', response.data);
+
         if (!response.data || !response.data.product) {
           console.error('No product data in response');
           return;
         }
 
         const productData = response.data.product;
-        console.log('Product Data:', productData); // Debug log
-        
         setProduct({
           id: productData._id,
           name: productData.name,
@@ -96,7 +93,7 @@ const ProductDetails = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
       </div>
     );
   }
@@ -107,7 +104,6 @@ const ProductDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Images */}
@@ -128,7 +124,7 @@ const ProductDetails = () => {
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
                     className={`flex-shrink-0 w-20 h-20 rounded-md overflow-hidden border-2
-                      ${currentImageIndex === index ? 'border-blue-500' : 'border-gray-200'}`}
+                      ${currentImageIndex === index ? 'border-orange-500' : 'border-gray-200'}`}
                   >
                     <img src={image} alt="" className="w-full h-full object-cover" />
                   </button>
@@ -140,7 +136,7 @@ const ProductDetails = () => {
           {/* Product Details */}
           <div className="bg-white p-6 rounded-lg shadow-sm space-y-6">
             <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
-            <p className="text-2xl font-bold text-blue-600">E {product.price}</p>
+            <p className="text-2xl font-bold text-orange-600">E {product.price}</p>
             <p className="text-gray-600">{product.description}</p>
 
             {/* Color Selection */}
@@ -153,7 +149,7 @@ const ProductDetails = () => {
                       key={color}
                       onClick={() => setSelectedColor(color)}
                       className={`w-8 h-8 rounded-full border-2
-                        ${selectedColor === color ? 'ring-2 ring-blue-500 ring-offset-2' : 'border-gray-300'}`}
+                        ${selectedColor === color ? 'ring-2 ring-orange-500 ring-offset-2' : 'border-gray-300'}`}
                       style={{ backgroundColor: color }}
                     />
                   ))}
@@ -179,13 +175,13 @@ const ProductDetails = () => {
             <div className="space-y-3 pt-4">
               <button
                 onClick={handleAddToCart}
-                className="w-full py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                className="w-full py-3 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
               >
                 Add to Cart
               </button>
               <button
                 onClick={handleBuyNow}
-                className="w-full py-3 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors"
+                className="w-full py-3 border border-orange-600 text-orange-600 rounded-md hover:bg-orange-50 transition-colors"
               >
                 Buy Now
               </button>

@@ -28,64 +28,64 @@ const Checkout = () => {
   const formatPrice = (price) => `E${Number(price || 0).toFixed(2)}`;
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Checkout</h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-gray-50 min-h-screen">
+      
 
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Shipping Details */}
-        <div className="md:col-span-7">
-          <div className="bg-white shadow-md rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">Shipping Details</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="lg:col-span-7">
+          <div className="bg-white shadow-lg rounded-xl p-8 border border-gray-100">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Shipping Details</h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium mb-1">Full Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                 <input
                   required
                   type="text"
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Email</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                 <input
                   required
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Phone Number</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                 <input
                   required
                   type="text"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Shipping Address</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Shipping Address</label>
                 <textarea
                   required
                   name="address"
-                  rows={3}
+                  rows={4}
                   value={formData.address}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300"
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
                 />
               </div>
               <div>
                 <button
                   type="submit"
                   disabled={quoteItems.length === 0}
-                  className="w-full bg-blue-600 text-white py-3 px-4 rounded hover:bg-blue-700 transition"
+                  className="w-full bg-orange-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
                   Place Order
                 </button>
@@ -95,30 +95,30 @@ const Checkout = () => {
         </div>
 
         {/* Order Summary */}
-        <div className="md:col-span-5">
-          <div className="bg-white shadow-md rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-            <div className="space-y-4">
+        <div className="lg:col-span-5">
+          <div className="bg-white shadow-lg rounded-xl p-8 border border-gray-100">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Order Summary</h2>
+            <div className="space-y-6">
               {Array.isArray(quoteItems) && quoteItems.map((item) => (
-                <div key={item?.id || `temp-${Math.random()}`} className="flex items-start gap-4 border-b pb-3">
+                <div key={item?.id || `temp-${Math.random()}`} className="flex items-start gap-4 border-b border-gray-100 pb-4">
                   <img
                     src={item?.selectedImage || 'https://example.com/default-image.jpg'}
                     alt={typeof item?.title === 'string' ? item.title : 'Product'}
-                    className="w-12 h-12 object-cover rounded"
+                    className="w-16 h-16 object-cover rounded-lg border border-gray-200"
                   />
                   <div className="flex-1">
-                    <p className="text-sm font-medium">{item?.title || 'Untitled Product'}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-base font-medium text-gray-900">{item?.title || 'Untitled Product'}</p>
+                    <p className="text-sm text-gray-500 mt-1">
                       Quantity: {item?.quantity || 0} × {formatPrice(item?.price)}
                     </p>
                   </div>
-                  <p className="text-sm font-semibold">
+                  <p className="text-base font-semibold text-gray-900">
                     {formatPrice(Number(item?.price || 0) * Number(item?.quantity || 0))}
                   </p>
                 </div>
               ))}
             </div>
-            <div className="border-t pt-4 mt-4 text-lg font-semibold">
+            <div className="border-t border-gray-200 pt-6 mt-6 text-xl font-bold text-gray-900">
               Total: {formatPrice(totalPrice)}
             </div>
           </div>
