@@ -37,7 +37,7 @@ function RouteGuard({ authenticated, user, element }) {
 RouteGuard.propTypes = {
   authenticated: PropTypes.bool.isRequired,
   user: PropTypes.object,
-  element: PropTypes.node.isRequired,
+  element: PropTypes.element.isRequired,
 };
 
 export default RouteGuard;

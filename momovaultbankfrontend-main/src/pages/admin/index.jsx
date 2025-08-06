@@ -23,7 +23,8 @@ export default function AdminDashboard() {
       const res = await axiosInstance.get("/api/admin/users", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setUsers(res.data.users);
+      setUsers(res.data.users); // this is correct, but let's add some logging
+      console.log("Users fetched:", res.data.users); // debug log
     } catch (err) {
       console.error("Failed to fetch users", err);
     }
@@ -110,11 +111,11 @@ export default function AdminDashboard() {
 
       {/* USERS SECTION */}
       <section style={{ backgroundColor: "#fff", padding: "1.5rem", borderRadius: "8px", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
-        <h2 style={{ borderBottom: "2px solid #eee", paddingBottom: "0.5rem", color: "#555" }}>Users</h2>
+        <h2 style={{ borderBottom: "2px solid #eee", paddingBottom: "0.5rem", color: "#555" }}>Users ({users.length})</h2>
         <ul style={{ listStyleType: "none", padding: 0 }}>
           {users.map((u) => (
             <li key={u._id} style={{ padding: "0.75rem 0", borderBottom: "1px solid #eee" }}>
-              <strong>{u.name}</strong> - {u.email}
+              <strong>{u.userName}</strong> - {u.userEmail} ({u.role})
             </li>
           ))}
         </ul>

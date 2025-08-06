@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '@/api/axiosInstance';
 import { useCartContext } from '@/Context/appstate/CartContext/CartContext';
-import { Header } from '@/components';
 
 const ProductDetails = () => {
   const { productId } = useParams();
@@ -97,7 +96,7 @@ const ProductDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Images */}
@@ -188,119 +187,4 @@ const ProductDetails = () => {
 };
 
 export default ProductDetails;
-    </div>
-  );
-};
-
-export default ProductDetails;
-              border: '2px solid #ccc',
-              borderRadius: '12px',
-              padding: '24px',
-            }}
-          >
-            <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', marginBottom: '16px' }}>
-              {product.name}
-            </Typography>
-
-            <Divider sx={{ marginBottom: '16px' }} />
-
-            <Typography variant="h5" color="primary" sx={{ fontWeight: 'bold', marginBottom: '16px' }}>
-              E{product.price}
-            </Typography>
-
-            <Typography variant="body1" color="textSecondary" sx={{ marginBottom: '24px', lineHeight: '1.6' }}>
-              {product.description}
-            </Typography>
-
-            {/* Color Selection */}
-            {product.color && product.color.length > 0 && (
-              <FormControl component="fieldset" sx={{ marginBottom: '24px' }}>
-                <Typography variant="body1" sx={{ marginBottom: '8px', fontWeight: 'bold' }}>
-                  Select Color:
-                </Typography>
-                <RadioGroup row value={selectedColor} onChange={handleColorChange}>
-                  {product.color.map((color) => (
-                    <FormControlLabel
-                      key={color}
-                      value={color}
-                      control={<Radio sx={{ display: 'none' }} />}
-                      label={
-                        <Box
-                          sx={{
-                            backgroundColor: color,
-                            width: 32,
-                            height: 32,
-                            borderRadius: '50%',
-                            border: selectedColor === color ? '2px solid #1976d2' : '1px solid #ccc',
-                            cursor: 'pointer',
-                          }}
-                        />
-                      }
-                    />
-                  ))}
-                </RadioGroup>
-              </FormControl>
-            )}
-
-            {/* Quantity Selector */}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                marginBottom: '24px',
-                gap: '12px',
-              }}
-            >
-              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                Quantity:
-              </Typography>
-              <IconButton onClick={handleDecrement} sx={{ backgroundColor: '#f0f0f0', padding: '8px' }}>
-                <RemoveIcon />
-              </IconButton>
-              <Typography variant="body1" sx={{ minWidth: '36px', textAlign: 'center' }}>
-                {quantity}
-              </Typography>
-              <IconButton onClick={handleIncrement} sx={{ backgroundColor: '#f0f0f0', padding: '8px' }}>
-                <AddIcon />
-              </IconButton>
-            </Box>
-
-            {/* Action Buttons */}
-            <Button
-              variant="contained"
-              size="large"
-              onClick={handleAddToCart}
-              sx={{
-                backgroundColor: '#FF6F61',
-                color: '#fff',
-                '&:hover': { backgroundColor: '#e55a4f' },
-                marginBottom: '16px',
-                width: '100%',
-                borderRadius: '8px',
-                padding: '14px',
-              }}
-            >
-              Add to Cart
-            </Button>
-
-            <Button
-              variant="outlined"
-              color="primary"
-              size="large"
-              onClick={handleBuyNow}
-              sx={{
-                width: '100%',
-                borderRadius: '8px',
-                padding: '14px',
-              }}
-            >
-              Buy Now
-            </Button>
-          </Box>
-        </Grid>
-      </Grid>
-    </>
-  );
-};
-
-export default ProductDetails;
+   
