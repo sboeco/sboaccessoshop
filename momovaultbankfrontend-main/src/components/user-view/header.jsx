@@ -1,17 +1,34 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FaShoppingCart, FaBars } from "react-icons/fa";
-import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
+import { useCartContext } from "@/Context/appstate/CartContext/CartContext";
+import axiosInstance from "@/api/axiosInstance";
 
-const Header = ({
-  categories = [],
-  selectedCategory = "",
-  handleCategorySelect,
-  totalQuantities = 0,
-  isMenuOpen,
-  setIsMenuOpen,
-}) => {
+const Header = () => {
   const navigate = useNavigate();
+  const { totalQuantities } = useCartContext();
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axiosInstance.get("/api/categories");
+        setCategories(res.data.categories || []);
+      } catch (err) {
+        console.error("Failed to fetch categories", err);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+    setIsMenuOpen(false);
+    navigate(category ? `/category/${category}` : '/');
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-md">
@@ -97,15 +114,6 @@ const Header = ({
       )}
     </header>
   );
-};
-
-Header.propTypes = {
-  categories: PropTypes.array.isRequired,
-  selectedCategory: PropTypes.string.isRequired,
-  handleCategorySelect: PropTypes.func.isRequired,
-  totalQuantities: PropTypes.number,
-  isMenuOpen: PropTypes.bool.isRequired,
-  setIsMenuOpen: PropTypes.func.isRequired,
 };
 
 export default Header;
