@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import axiosInstance from "@/api/axiosInstance";
-import { FaTags, FaBoxOpen, FaShoppingCart, FaBars } from "react-icons/fa";
+import {  FaBoxOpen, FaShoppingCart, FaBars } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useCartContext } from "@/Context/appstate/CartContext/CartContext";
 
