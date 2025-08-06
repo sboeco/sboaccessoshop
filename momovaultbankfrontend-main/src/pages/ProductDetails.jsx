@@ -18,22 +18,32 @@ const ProductDetails = () => {
       try {
         setLoading(true);
         const response = await axiosInstance.get(`/api/products/${productId}`);
-        const productData = response.data.product;
+        console.log('API Response:', response.data); // Debug log
+        
+        // Check if we have a product in the response
+        if (!response.data || !response.data.product) {
+          console.error('No product data in response');
+          return;
+        }
 
+        const productData = response.data.product;
+        
         setProduct({
           id: productData._id,
           name: productData.name,
           price: productData.price,
           description: productData.description,
-          images: productData.images || [],
-          color: productData.colors || [],
+          images: Array.isArray(productData.images) ? productData.images : [productData.images],
+          colors: Array.isArray(productData.colors) ? productData.colors : [],
+          title: productData.name, // Add this for cart compatibility
         });
 
         if (productData.colors && productData.colors.length > 0) {
           setSelectedColor(productData.colors[0]);
         }
       } catch (error) {
-        console.error('Error fetching product:', error);
+        console.error('Error fetching product:', error.response || error);
+        setProduct(null);
       } finally {
         setLoading(false);
       }
@@ -133,11 +143,11 @@ const ProductDetails = () => {
             <p className="text-gray-600">{product.description}</p>
 
             {/* Color Selection */}
-            {product.color?.length > 0 && (
+            {product.colors?.length > 0 && (
               <div className="space-y-2">
                 <h3 className="font-medium text-gray-900">Select Color</h3>
                 <div className="flex gap-2">
-                  {product.color.map((color) => (
+                  {product.colors.map((color) => (
                     <button
                       key={color}
                       onClick={() => setSelectedColor(color)}
@@ -187,4 +197,3 @@ const ProductDetails = () => {
 };
 
 export default ProductDetails;
-   

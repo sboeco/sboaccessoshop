@@ -7,10 +7,11 @@ import { AuthContext } from "./context/auth-context";
 import { Toaster } from "react-hot-toast";
 import HomePage from "@/pages/user/home";
 import NotFoundPage from "@/pages/not-found";
-import DepositPage from "@/pages/user/deposit";
-import WithdrawPage from "@/pages/user/withdraw";
+
 import { CartProvider } from "./Context/appstate/CartContext/CartContext";
 import ProductDetails from "./pages/ProductDetails";
+import Cart from "@/pages/Cart";
+import Checkout from "@/pages/Checkout";
 
 function App() {
   const { auth } = useContext(AuthContext);
@@ -44,28 +45,6 @@ function App() {
         />
 
         <Route
-          path="/deposit"
-          element={
-            <RouteGuard
-              element={<DepositPage />}
-              authenticated={auth?.authenticate}
-              user={auth?.user}
-            />
-          }
-        />
-
-        <Route
-          path="/withdraw"
-          element={
-            <RouteGuard
-              element={<WithdrawPage />}
-              authenticated={auth?.authenticate}
-              user={auth?.user}
-            />
-          }
-        />
-
-        <Route
           path="/admin"
           element={
             <RouteGuard
@@ -79,9 +58,33 @@ function App() {
         <Route
           path="/product/:productId"
           element={
-            <RouteGuard>
-              <ProductDetails />
-            </RouteGuard>
+            <RouteGuard
+              element={<ProductDetails />}
+              authenticated={auth?.authenticate}
+              user={auth?.user}
+            />
+          }
+        />
+
+        <Route
+          path="/cart"
+          element={
+            <RouteGuard
+              element={<Cart />}
+              authenticated={auth?.authenticate}
+              user={auth?.user}
+            />
+          }
+        />
+
+        <Route
+          path="/checkout"
+          element={
+            <RouteGuard
+              element={<Checkout />}
+              authenticated={auth?.authenticate}
+              user={auth?.user}
+            />
           }
         />
 
