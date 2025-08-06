@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import axiosInstance from "@/api/axiosInstance";
 import { FaTags, FaBoxOpen, FaShoppingCart } from "react-icons/fa"; // Added FaShoppingCart for cart button
 import { useNavigate } from "react-router-dom";
@@ -6,10 +6,17 @@ import { useCartContext } from "@/Context/appstate/CartContext/CartContext";
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { onAdd } = useCartContext();
+  const { onAdd, totalQuantities } = useCartContext(); // Add totalQuantities
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [products, setProducts] = useState([]);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const bannerImages = [
+    "https://res.cloudinary.com/dtdcvyuvd/image/upload/v1732694352/earpods1_hhfacv.jpg", // Replace with your actual banner image URLs
+    "https://res.cloudinary.com/dtdcvyuvd/image/upload/v1732694263/pink-headphones_djzzbf.webp",
+    "https://res.cloudinary.com/dtdcvyuvd/image/upload/v1737954756/airfryers_lyul3e.jpg",
+  ];
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -41,6 +48,15 @@ const HomePage = () => {
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+
+  // Auto-slide effect
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % bannerImages.length);
+    }, 5000); // Change slide every 5 seconds
+
+    return () => clearInterval(timer);
+  }, [bannerImages.length]);
 
   const handleProductClick = (productId) => {
     navigate(`/product/${productId}`);
@@ -93,11 +109,53 @@ const HomePage = () => {
               />
             </svg>
           </div>
-          <button onClick={() => navigate('/cart')} className="relative p-2 rounded-full bg-gray-100 text-gray-700 hover:bg-orange-100 transition-colors">
+          <button
+            onClick={() => navigate("/cart")}
+            className="relative p-2 rounded-full bg-gray-100 text-gray-700 hover:bg-orange-100 transition-colors"
+          >
             <FaShoppingCart />
+            {totalQuantities > 0 && (
+              <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                {totalQuantities}
+              </span>
+            )}
           </button>
         </div>
       </header>
+
+      {/* Banner Section */}
+      <section className="relative h-[300px] overflow-hidden rounded-xl">
+        <div className="relative w-full h-full">
+          {bannerImages.map((image, index) => (
+            <div
+              key={index}
+              className={`absolute w-full h-full transition-all duration-500 ease-in-out transform ${
+                index === currentSlide ? "translate-x-0" : "translate-x-full"
+              }`}
+              style={{ zIndex: index === currentSlide ? 1 : 0 }}
+            >
+              <img
+                src={image}
+                alt={`Banner ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Navigation Dots */}
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          {bannerImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-2 h-2 rounded-full transition-colors ${
+                index === currentSlide ? "bg-orange-500" : "bg-white"
+              }`}
+            />
+          ))}
+        </div>
+      </section>
 
       {/* Categories Section */}
       <section className="bg-white rounded-xl shadow-md p-6">
@@ -161,7 +219,10 @@ const HomePage = () => {
                   className="cursor-pointer p-2"
                 >
                   <img
-                    src={product.images?.[0] || "https://via.placeholder.com/150"}
+                    src={
+                      product.images?.[0] ||
+                      "https://via.placeholder.com/150"
+                    }
                     alt={product.name}
                     className="w-full h-32 sm:h-40 object-cover rounded-lg mb-2"
                   />
