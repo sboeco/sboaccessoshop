@@ -2,6 +2,7 @@ import { useCartContext } from '../Context/appstate/CartContext/CartContext';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
 const Checkout = () => {
   const { quoteItems = [], totalPrice = 0, handleCheckout } = useCartContext();
   const navigate = useNavigate();

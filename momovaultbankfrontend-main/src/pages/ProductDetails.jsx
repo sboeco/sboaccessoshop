@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '@/api/axiosInstance';
 import { useCartContext } from '@/Context/appstate/CartContext/CartContext';
+import Header from '@/components/user-view/header';
 
 const ProductDetails = () => {
   const { productId } = useParams();
@@ -104,6 +105,7 @@ const ProductDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Header />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Images */}
