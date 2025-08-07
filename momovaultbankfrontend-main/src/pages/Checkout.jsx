@@ -2,11 +2,11 @@ import { useCartContext } from '../Context/appstate/CartContext/CartContext';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
 const Checkout = () => {
   const { quoteItems = [], totalPrice = 0, handleCheckout } = useCartContext();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    momoNumber: '',
     fullName: '',
     email: '',
     phone: '',
@@ -30,14 +30,25 @@ const Checkout = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-gray-50 min-h-screen">
-      
-
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Shipping Details */}
         <div className="lg:col-span-7">
           <div className="bg-white shadow-lg rounded-xl p-8 border border-gray-100">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Shipping Details</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Delivery Details</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Momo Number Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Enter MoMo Number To Pay With</label>
+                <input
+                  required
+                  type="text"
+                  name="momoNumber"
+                  value={formData.momoNumber}
+                  onChange={handleChange}
+                  className="w-full border border-gray-200 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+                />
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                 <input

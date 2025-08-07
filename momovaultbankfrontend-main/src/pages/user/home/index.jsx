@@ -265,7 +265,7 @@ const HomePage = () => {
   onClick={(e) => handleAddToCart(e, product)}
   aria-label="Add to cart"
 >
-  <span className="text-sm font-semibold">Add to Cart</span>
+  <span className="text-sm font-semibold">Buy Now</span>
   <FaShoppingCart size={16} />
 </button>
                     </div>

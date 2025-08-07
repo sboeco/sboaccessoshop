@@ -96,7 +96,7 @@ const Cart = () => {
               <p className="text-xl font-bold text-gray-900 mb-4">Total: {formatPrice(totalPrice)}</p>
               <Link to="/checkout">
                 <button className="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition duration-200">
-                  Proceed to Checkout
+                  Proceed to Pay
                 </button>
               </Link>
             </div>
