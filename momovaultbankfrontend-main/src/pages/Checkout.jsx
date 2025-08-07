@@ -1,9 +1,10 @@
 import { useCartContext } from '../Context/appstate/CartContext/CartContext';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../api/axiosInstance';
 
 const Checkout = () => {
-  const { quoteItems = [], totalPrice = 0, handleCheckout } = useCartContext();
+  const { quoteItems = [], totalPrice = 0 } = useCartContext();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     momoNumber: '',
@@ -13,6 +14,8 @@ const Checkout = () => {
     address: '',
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -20,10 +23,52 @@ const Checkout = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    handleCheckout(formData);
-    navigate('/confirmation');
+    setLoading(true);
+
+    try {
+      // Step 1: Create order
+      const orderPayload = {
+        userId: formData.email, // You can use actual user ID if you have auth
+        momoNumber: formData.momoNumber,
+        products: quoteItems.map((item) => ({
+          productId: item._id,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        totalAmount: totalPrice,
+        shippingInfo: {
+          fullName: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+        },
+      };
+
+      const orderRes = await axiosInstance.post('/orders/create', orderPayload);
+      const orderId = orderRes.data.orderId;
+
+      // Step 2: Trigger MoMo Payment
+      const paymentRes = await axiosInstance.post('/money-collect', {
+        amount: totalPrice,
+        phoneNumber: formData.momoNumber,
+        userId: formData.email, // Or real user ID
+        orderId,
+      });
+
+      if (paymentRes.data.status === 'SUCCESSFUL') {
+        navigate('/confirmation');
+      } else {
+        alert(`Payment failed: ${paymentRes.data.message || 'Please try again.'}`);
+      }
+    }catch (error) {
+  console.error('Checkout Error:', error.response?.data || error.message || error);
+  alert('Something went wrong during checkout.');
+
+    } finally {
+      setLoading(false);
+    }
   };
 
   const formatPrice = (price) => `E${Number(price || 0).toFixed(2)}`;
@@ -36,7 +81,6 @@ const Checkout = () => {
           <div className="bg-white shadow-lg rounded-xl p-8 border border-gray-100">
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Delivery Details</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Momo Number Field */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Enter MoMo Number To Pay With</label>
                 <input
@@ -96,10 +140,10 @@ const Checkout = () => {
               <div>
                 <button
                   type="submit"
-                  disabled={quoteItems.length === 0}
+                  disabled={quoteItems.length === 0 || loading}
                   className="w-full bg-orange-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                  Place Order
+                  {loading ? 'Processing...' : 'Pay'}
                 </button>
               </div>
             </form>
