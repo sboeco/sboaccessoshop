@@ -1,20 +1,24 @@
+// Checkout.jsx
 import { useCartContext } from '../Context/appstate/CartContext/CartContext';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
+import { AuthContext } from '../context/auth-context/'; // Import the AuthContext
 
 const Checkout = () => {
   const { quoteItems = [], totalPrice = 0 } = useCartContext();
+  const { auth } = useContext(AuthContext); // Access the auth object from context
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     momoNumber: '',
     fullName: '',
-    email: '',
-    phone: '',
+    email: auth.user ? auth.user.userEmail : '', // Pre-fill with user email
+    phone: auth.user ? auth.user.phoneNumber : '', // Pre-fill with user phone
     address: '',
   });
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setFormData({
@@ -24,48 +28,56 @@ const Checkout = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
+  setError('');
 
-    try {
-      // Step 1: Create order
-      const orderPayload = {
-        userId: formData.email, // You can use actual user ID if you have auth
-        momoNumber: formData.momoNumber,
-        products: quoteItems.map((item) => ({
-          productId: item._id,
-          quantity: item.quantity,
-          price: item.price,
-        })),
-        totalAmount: totalPrice,
-        shippingInfo: {
-          fullName: formData.fullName,
-          email: formData.email,
-          phone: formData.phone,
-          address: formData.address,
-        },
-      };
+  try {
+    if (!auth.user || !auth.user._id) {
+      setError("User not authenticated. Please log in.");
+      setLoading(false);
+      return;
+    }
 
-      const orderRes = await axiosInstance.post('/orders/create', orderPayload);
+    // Step 1: Create order
+    const orderPayload = {
+      userId: auth.user._id, 
+      momoNumber: formData.momoNumber,
+      products: quoteItems.map((item) => ({
+        productId: item._id, //  ✅ ADD THIS LINE
+        quantity: item.quantity,
+        price: item.price,
+      })),
+      totalAmount: totalPrice,
+      shippingInfo: {
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+      },
+    };
+
+      const orderRes = await axiosInstance.post('orders/create', orderPayload);
       const orderId = orderRes.data.orderId;
 
       // Step 2: Trigger MoMo Payment
       const paymentRes = await axiosInstance.post('/money-collect', {
         amount: totalPrice,
         phoneNumber: formData.momoNumber,
-        userId: formData.email, // Or real user ID
+        userId: auth.user._id, // Also use the user's _id for the payment request
         orderId,
       });
 
       if (paymentRes.data.status === 'SUCCESSFUL') {
         navigate('/confirmation');
       } else {
-        alert(`Payment failed: ${paymentRes.data.message || 'Please try again.'}`);
+        setError(paymentRes.data.message || 'Payment failed. Please try again.');
       }
-    }catch (error) {
-  console.error('Checkout Error:', error.response?.data || error.message || error);
-  alert('Something went wrong during checkout.');
-
+    } catch (error) {
+      console.error('Checkout Error:', error.response?.data || error.message || error);
+      const backendErrorMessage = error.response?.data?.message || error.response?.data?.error;
+      const genericMessage = 'Something went wrong during checkout. Please try again.';
+      setError(backendErrorMessage || genericMessage);
     } finally {
       setLoading(false);
     }
@@ -81,6 +93,12 @@ const Checkout = () => {
           <div className="bg-white shadow-lg rounded-xl p-8 border border-gray-100">
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Delivery Details</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Display error message if it exists */}
+              {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                  <span className="block sm:inline">{error}</span>
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Enter MoMo Number To Pay With</label>
                 <input
