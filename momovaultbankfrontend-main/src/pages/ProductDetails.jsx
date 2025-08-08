@@ -174,20 +174,20 @@ const ProductDetails = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="space-y-3 pt-4">
-              <button
-                onClick={handleAddToCart}
-                className="w-full py-3 bg-momoBlue text-white rounded-md hover:bg-blue-600 transition-colors"
-              >
-                Add to Cart
-              </button>
-              <button
-                onClick={handleBuyNow}
-                className="w-full py-3 border border-momoBlue text-momoBlue rounded-md hover:bg-blue-50 transition-colors"
-              >
-                Buy Now
-              </button>
-            </div>
+           <div className="space-y-3 pt-4">
+  <button
+    onClick={handleAddToCart}
+    className="w-full py-3 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
+  >
+    Add to Cart
+  </button>
+  <button
+    onClick={handleBuyNow}
+    className="w-full py-3 border border-orange-500 text-orange-500 rounded-md hover:bg-orange-50 transition-colors"
+  >
+    Buy Now
+  </button>
+</div>
           </div>
         </div>
       </div>

@@ -16,8 +16,8 @@ const Cart = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header/>
-      {/* Page content wrapper */}
+      <Header />
+
       <div className="flex-1 w-full px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-5xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
@@ -46,23 +46,26 @@ const Cart = () => {
               {quoteItems.map((item) => (
                 <div
                   key={item?.id || `temp-${Math.random()}`}
-                  className="flex items-center gap-6 bg-white p-4 rounded-lg shadow-md border border-gray-100 hover:shadow-lg transition duration-200"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-4 rounded-lg shadow-md border border-gray-100 hover:shadow-lg transition duration-200"
                 >
-                  {/* Product Image */}
-                  <img
-                    src={item?.selectedImage || 'https://example.com/default-image.jpg'}
-                    alt={item?.title || 'Product'}
-                    className="w-20 h-20 object-cover rounded-lg border border-gray-200"
-                  />
+                  {/* Left section: Image + Info */}
+                  <div className="flex flex-1 items-start gap-4">
+                    {/* Product Image */}
+                    <img
+                      src={item?.selectedImage || 'https://example.com/default-image.jpg'}
+                      alt={item?.title || 'Product'}
+                      className="w-20 h-20 object-cover rounded-lg border border-gray-200"
+                    />
 
-                  {/* Product Info */}
-                  <div className="flex-1">
-                    <h3 className="text-lg font-medium text-gray-900">{item?.title || 'Untitled Product'}</h3>
-                    <p className="text-sm text-gray-600 mt-1">{formatPrice(item?.price)}</p>
+                    {/* Product Info */}
+                    <div>
+                      <h3 className="text-lg font-medium text-gray-900">{item?.title || 'Untitled Product'}</h3>
+                      <p className="text-sm text-gray-600 mt-1">{formatPrice(item?.price)}</p>
+                    </div>
                   </div>
 
-                  {/* Quantity Controls */}
-                  <div className="flex items-center gap-3 bg-gray-100 rounded-lg p-2">
+                  {/* Middle section: Quantity Controls */}
+                  <div className="flex items-center gap-3 bg-gray-100 rounded-lg p-2 self-start sm:self-center">
                     <button
                       onClick={() => toggleCartItemQuanitity(item.id, 'dec')}
                       className="p-2 rounded-full bg-white shadow-sm hover:bg-gray-200 transition duration-200"
@@ -78,10 +81,10 @@ const Cart = () => {
                     </button>
                   </div>
 
-                  {/* Remove Item */}
+                  {/* Right section: Remove Item */}
                   <button
                     onClick={() => onRemove(item)}
-                    className="p-2 rounded-full hover:bg-orange-100 transition duration-200"
+                    className="p-2 rounded-full hover:bg-orange-100 transition duration-200 self-start sm:self-center"
                   >
                     <Trash2 className="w-5 h-5 text-orange-600 hover:text-orange-700" />
                   </button>
