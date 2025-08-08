@@ -15,8 +15,7 @@ function CommonForm({
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit();
+        handleSubmit(e);
       }}
       className="space-y-4"
     >
@@ -62,3 +61,4 @@ CommonForm.propTypes = {
 };
 
 export default CommonForm;
+

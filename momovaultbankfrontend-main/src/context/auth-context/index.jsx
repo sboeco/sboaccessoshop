@@ -20,13 +20,15 @@ export default function AuthProvider({ children }) {
   const navigate = useNavigate();
 
   //  REGISTER USER
-async function handleRegisterUser(event) {
-  event.preventDefault();
+ async function handleRegisterUser(event) {
+  if (event?.preventDefault) {
+    event.preventDefault();
+  }
 
   try {
     const response = await axiosInstance.post("/auth/register", {
       ...signUpFormData,
-      role: "user", // optional
+      role: "user",
     });
 
     if (response.data.success) {
@@ -52,31 +54,30 @@ async function handleRegisterUser(event) {
           user: data.data.user,
         });
 
-        // ✅ Redirect after signup + login
-        const params = new URLSearchParams(window.location.search);
-        const redirectPath = params.get("redirect");
-
-        if (redirectPath) {
-          navigate(redirectPath);
-        } else {
-          navigate("/home");
-        }
+        // Don't navigate here, just return success
+        return true;
       } else {
-        toast.error("Account created, but automatic login failed. Please sign in.");
-        navigate("/auth");
+        toast.error(
+          "Account created, but automatic login failed. Please sign in."
+        );
+        return false;
       }
     } else {
       toast.error(response.data.message || "Registration failed.");
+      return false;
     }
   } catch (error) {
     toast.error(
       error.response?.data?.message || "Registration failed. Try again."
     );
+    return false;
   }
 }
-  // LOGIN USER
- async function handleLoginUser(event) {
-  event.preventDefault();
+ // LOGIN USER
+async function handleLoginUser(event, redirectPath) {
+  if (event?.preventDefault) {
+    event.preventDefault();
+  }
 
   try {
     const response = await axiosInstance.post("/auth/login", signInFormData);
@@ -93,23 +94,22 @@ async function handleRegisterUser(event) {
 
       toast.success("You have successfully logged in!");
 
-      // ✅ Check if redirect param exists
-      const params = new URLSearchParams(window.location.search);
-      const redirectPath = params.get("redirect");
-
       if (data.data.user.role === "admin") {
         navigate("/admin");
       } else if (redirectPath) {
-        navigate(redirectPath); // Go back to the original page
+        navigate(redirectPath); // Use passed redirect path
       } else {
         navigate("/home");
       }
+      return true;
     } else {
       setAuth({ authenticate: false, user: null });
       toast.error(data?.message || "Login failed. Please try again.");
+      return false;
     }
   } catch (error) {
     toast.error(error.response?.data?.message || "Login failed. Please try again.");
+    return false;
   }
 }
   // CHECK AUTH ON PAGE LOAD

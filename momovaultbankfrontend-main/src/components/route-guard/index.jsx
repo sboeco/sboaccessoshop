@@ -8,14 +8,17 @@ function RouteGuard({ authenticated, user, element }) {
   console.log("AUTH CHECK:", authenticated, user);
 
   // 🚫 If not logged in, remember the page they were trying to visit
-  if (!authenticated && !location.pathname.includes("/auth")) {
-    return (
-      <Navigate
-        to={`/auth?redirect=${encodeURIComponent(location.pathname)}`}
-        replace
-      />
-    );
-  }
+if (!authenticated && !location.pathname.includes("/signin")) {
+  return (
+    <Navigate
+      to="/signin"
+      replace
+      state={{ from: location }} // this is correct
+    />
+  );
+}
+
+
 
   // 🧍 Block regular users from accessing /admin routes
   if (

@@ -1,5 +1,6 @@
-import { Route, Routes } from "react-router-dom";
-import AuthPage from "@/pages/auth";
+
+import { Route, Routes} from "react-router-dom";
+
 import AdminDashboard from "@/pages/admin";
 import RouteGuard from "./components/route-guard";
 import { useContext } from "react";
@@ -12,6 +13,9 @@ import { CartProvider } from "./Context/appstate/CartContext/CartContext";
 import ProductDetails from "./pages/ProductDetails";
 import Cart from "@/pages/Cart";
 import Checkout from "@/pages/Checkout";
+// New separate auth pages
+import SignIn from "@/pages/auth/SignIn";
+import SignUp from "@/pages/auth/SignUp";
 
 function App() {
   const { auth } = useContext(AuthContext);
@@ -22,17 +26,9 @@ function App() {
         {/* Root goes to Home page (public) */}
         <Route path="/" element={<HomePage />} />
 
-        {/* Auth page */}
-        <Route
-          path="/auth"
-          element={
-            <RouteGuard
-              element={<AuthPage />}
-              authenticated={auth?.authenticate}
-              user={auth?.user}
-            />
-          }
-        />
+        {/* Public auth routes */}
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
 
         {/* Admin dashboard - protected */}
         <Route
@@ -73,3 +69,4 @@ function App() {
 }
 
 export default App;
+
