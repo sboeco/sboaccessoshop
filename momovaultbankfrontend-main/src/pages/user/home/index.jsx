@@ -1,3 +1,6 @@
+
+
+
 import { useEffect, useState, useCallback } from "react";
 import axiosInstance from "@/api/axiosInstance";
 import { FaShoppingCart, FaBars } from "react-icons/fa";
@@ -14,6 +17,12 @@ const HomePage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // NEW pagination state
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 8; // Products per page
 
   const bannerImages = [
     "https://res.cloudinary.com/dtdcvyuvd/image/upload/v1732694352/earpods1_hhfacv.jpg",
@@ -24,17 +33,38 @@ const HomePage = () => {
   const fetchProducts = useCallback(async () => {
     setIsLoading(true);
     try {
-      const endpoint = selectedCategory
-        ? `/api/products?category=${selectedCategory}`
-        : `/api/products`;
+      let endpoint = `/api/products`;
+      const params = new URLSearchParams();
+      
+      params.append("page", page);
+      params.append("limit", limit);
+
+      if (selectedCategory) {
+        params.append("category", selectedCategory);
+      }
+      if (searchQuery) {
+        params.append("search", searchQuery);
+      }
+
+      endpoint += `?${params.toString()}`;
+
       const res = await axiosInstance.get(endpoint);
       setProducts(res.data.products || []);
+      setTotalPages(res.data.totalPages || 1);
     } catch (err) {
       console.error("Failed to fetch products", err);
     } finally {
       setIsLoading(false);
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, searchQuery, page]);
+
+  // Trigger fetch on search, category, or page change
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchProducts();
+    }, 500);
+    return () => clearTimeout(delayDebounce);
+  }, [searchQuery, fetchProducts]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -45,7 +75,6 @@ const HomePage = () => {
         console.error("Failed to fetch categories", err);
       }
     };
-
     fetchCategories();
     fetchProducts();
   }, [fetchProducts]);
@@ -80,12 +109,19 @@ const HomePage = () => {
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
+    setPage(1); // reset to first page
     setIsMenuOpen(false);
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
-      {/* Header */}
+           {/* Header */}
       <header className="sticky top-0 z-50 bg-white shadow-md">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
@@ -103,6 +139,8 @@ const HomePage = () => {
               <input
                 type="text"
                 placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 pr-4 py-2 w-64 rounded-full bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-300"
               />
               <svg
@@ -199,35 +237,17 @@ const HomePage = () => {
             </div>
           ))}
         </div>
-
-        {/* Navigation Dots */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-          {bannerImages.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-colors ${
-                index === currentSlide ? "bg-orange-500" : "bg-white/50"
-              }`}
-            />
-          ))}
-        </div>
       </section>
 
       {/* Products Section */}
       <section className="px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">
-            Featured Products
-          </h2>
-          <button className="text-sm text-blue-600 hover:underline">
-            View All
-          </button>
+          <h2 className="text-2xl font-bold text-gray-800">Featured Products</h2>
         </div>
 
         {isLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[...Array(8)].map((_, index) => (
+            {[...Array(limit)].map((_, index) => (
               <div key={index} className="bg-white rounded-xl shadow-md p-4 animate-pulse">
                 <div className="w-full h-40 bg-gray-200 rounded-lg mb-4"></div>
                 <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
@@ -239,47 +259,73 @@ const HomePage = () => {
         ) : products.length === 0 ? (
           <p className="text-center text-gray-500">No products available.</p>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {products.map((product) => (
-              <div
-                key={product._id}
-                className="bg-white rounded-xl shadow-md overflow-hidden transition-transform hover:shadow-lg hover:-translate-y-1 cursor-pointer"
-                onClick={() => handleProductClick(product._id)}
-              >
-                <img
-                  src={product.images?.[0] || "https://via.placeholder.com/150"}
-                  alt={product.name}
-                  className="w-full h-48 object-contain p-4"
-                />
-                <div className="p-4 border-t">
-                  <h3 className="font-semibold text-base text-gray-800 line-clamp-2">
-                    {product.name}
-                  </h3>
-                  <p className="text-sm text-gray-500 my-2 line-clamp-2">
-                    {product.description}
-                  </p>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 gap-3">
-                    <p className="font-bold text-lg text-gray-900">
-                      E {product.price}
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {products.map((product) => (
+                <div
+                  key={product._id}
+                  className="bg-white rounded-xl shadow-md overflow-hidden transition-transform hover:shadow-lg hover:-translate-y-1 cursor-pointer"
+                  onClick={() => handleProductClick(product._id)}
+                >
+                  <img
+                    src={product.images?.[0] || "https://via.placeholder.com/150"}
+                    alt={product.name}
+                    className="w-full h-48 object-contain p-4"
+                  />
+                  <div className="p-4 border-t">
+                    <h3 className="font-semibold text-base text-gray-800 line-clamp-2">
+                      {product.name}
+                    </h3>
+                    <p className="text-sm text-gray-500 my-2 line-clamp-2">
+                      {product.description}
                     </p>
-                    <button
-                      className="bg-orange-500 text-white px-4 py-2 rounded-full flex items-center justify-center gap-2 hover:bg-orange-600 transition-colors"
-                      onClick={(e) => handleAddToCart(e, product)}
-                      aria-label="Add to cart"
-                    >
-                      <span className="text-sm font-semibold">Buy Now</span>
-                      <FaShoppingCart size={16} />
-                    </button>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 gap-3">
+                      <p className="font-bold text-lg text-gray-900">
+                        E {product.price}
+                      </p>
+                      <button
+                        className="bg-orange-500 text-white px-4 py-2 rounded-full flex items-center justify-center gap-2 hover:bg-orange-600 transition-colors"
+                        onClick={(e) => handleAddToCart(e, product)}
+                        aria-label="Add to cart"
+                      >
+                        <span className="text-sm font-semibold">Buy Now</span>
+                        <FaShoppingCart size={16} />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            <div className="flex justify-center items-center mt-6 space-x-2">
+              <button
+                onClick={() => handlePageChange(page - 1)}
+                disabled={page === 1}
+                className={`px-4 py-2 rounded-md border ${
+                  page === 1 ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-white hover:bg-gray-100"
+                }`}
+              >
+                Prev
+              </button>
+
+              <span className="px-4 py-2">{page} / {totalPages}</span>
+
+              <button
+                onClick={() => handlePageChange(page + 1)}
+                disabled={page === totalPages}
+                className={`px-4 py-2 rounded-md border ${
+                  page === totalPages ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-white hover:bg-gray-100"
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          </>
         )}
       </section>
       <Footer />
     </div>
   );
 };
-
 export default HomePage;
