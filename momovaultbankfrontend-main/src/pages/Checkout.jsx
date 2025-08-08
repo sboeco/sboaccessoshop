@@ -57,11 +57,11 @@ const Checkout = () => {
       },
     };
 
-      const orderRes = await axiosInstance.post('orders/create', orderPayload);
+      const orderRes = await axiosInstance.post('api/orders/create', orderPayload);
       const orderId = orderRes.data.orderId;
 
       // Step 2: Trigger MoMo Payment
-      const paymentRes = await axiosInstance.post('/money-collect', {
+      const paymentRes = await axiosInstance.post('momo/money-collect', {
         amount: totalPrice,
         phoneNumber: formData.momoNumber,
         userId: auth.user._id, // Also use the user's _id for the payment request

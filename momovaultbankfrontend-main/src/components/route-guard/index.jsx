@@ -7,9 +7,14 @@ function RouteGuard({ authenticated, user, element }) {
 
   console.log("AUTH CHECK:", authenticated, user);
 
-  // 🚫 If user is not logged in and tries to access any protected page
+  // 🚫 If not logged in, remember the page they were trying to visit
   if (!authenticated && !location.pathname.includes("/auth")) {
-    return <Navigate to="/auth" />;
+    return (
+      <Navigate
+        to={`/auth?redirect=${encodeURIComponent(location.pathname)}`}
+        replace
+      />
+    );
   }
 
   // 🧍 Block regular users from accessing /admin routes
@@ -18,16 +23,16 @@ function RouteGuard({ authenticated, user, element }) {
     user?.role !== "admin" &&
     location.pathname.startsWith("/admin")
   ) {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/home" replace />;
   }
 
-  // 👑 Block admin users from accessing /dashboard routes
+  // 👑 Block admin users from accessing /user routes
   if (
     authenticated &&
     user?.role === "user" &&
     location.pathname.startsWith("/user")
   ) {
-    return <Navigate to="/home" />;
+    return <Navigate to="/home" replace />;
   }
 
   // ✅ Allow access

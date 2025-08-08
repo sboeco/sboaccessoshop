@@ -1,4 +1,4 @@
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import AuthPage from "@/pages/auth";
 import AdminDashboard from "@/pages/admin";
 import RouteGuard from "./components/route-guard";
@@ -19,9 +19,10 @@ function App() {
   return (
     <CartProvider>
       <Routes>
-        {/* Redirect root to /auth */}
-        <Route path="/" element={<Navigate to="/auth" />} />
+        {/* Root goes to Home page (public) */}
+        <Route path="/" element={<HomePage />} />
 
+        {/* Auth page */}
         <Route
           path="/auth"
           element={
@@ -33,17 +34,7 @@ function App() {
           }
         />
 
-        <Route
-          path="/home"
-          element={
-            <RouteGuard
-              element={<HomePage />}
-              authenticated={auth?.authenticate}
-              user={auth?.user}
-            />
-          }
-        />
-
+        {/* Admin dashboard - protected */}
         <Route
           path="/admin"
           element={
@@ -55,28 +46,13 @@ function App() {
           }
         />
 
-        <Route
-          path="/product/:productId"
-          element={
-            <RouteGuard
-              element={<ProductDetails />}
-              authenticated={auth?.authenticate}
-              user={auth?.user}
-            />
-          }
-        />
+        {/* Public product details */}
+        <Route path="/product/:productId" element={<ProductDetails />} />
 
-        <Route
-          path="/cart"
-          element={
-            <RouteGuard
-              element={<Cart />}
-              authenticated={auth?.authenticate}
-              user={auth?.user}
-            />
-          }
-        />
+        {/* Public cart page */}
+        <Route path="/cart" element={<Cart />} />
 
+        {/* Checkout - protected */}
         <Route
           path="/checkout"
           element={
