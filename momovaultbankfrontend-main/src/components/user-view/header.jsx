@@ -40,7 +40,7 @@ const Header = () => {
           >
             <FaBars size={24} />
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">ShopEasy</h1>
+          <h1 className="text-2xl font-bold text-gray-800">SBO-EXPRESS-SHOP</h1>
         </div>
 
         <div className="flex items-center gap-4">

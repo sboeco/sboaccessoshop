@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '@/api/axiosInstance';
 import { useCartContext } from '@/Context/appstate/CartContext/CartContext';
 import Header from '@/components/user-view/header';
+import Footer from '@/components/user-view/footer';
 
 const ProductDetails = () => {
   const { productId } = useParams();
@@ -191,6 +192,7 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

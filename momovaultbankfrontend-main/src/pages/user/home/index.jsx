@@ -3,6 +3,7 @@ import axiosInstance from "@/api/axiosInstance";
 import { FaShoppingCart, FaBars } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useCartContext } from "@/Context/appstate/CartContext/CartContext";
+import Footer from "@/components/user-view/Footer"; 
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -276,6 +277,7 @@ const HomePage = () => {
           </div>
         )}
       </section>
+      <Footer />
     </div>
   );
 };
